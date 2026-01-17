@@ -54,7 +54,7 @@ pip install -r requirements.txt
 python run.py
 
 # Open in browser
-open http://localhost:5000
+open http://localhost:5100
 
 # Load demo data (optional)
 # Click "Load Demo Data" on the dashboard
