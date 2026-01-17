@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}New Patient Intake{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <h1>New Patient Intake</h1>
+    <p class="form-intro">Start the intake process by entering patient information.</p>
+
+    <form method="POST" class="intake-form">
+        <section class="form-section">
+            <h2>Personal Information</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name">First Name *</label>
+                    <input type="text" id="first_name" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name *</label>
+                    <input type="text" id="last_name" name="last_name" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth *</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" rows="2"></textarea>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>Emergency Contact</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="emergency_contact_name">Contact Name</label>
+                    <input type="text" id="emergency_contact_name" name="emergency_contact_name">
+                </div>
+                <div class="form-group">
+                    <label for="emergency_contact_phone">Contact Phone</label>
+                    <input type="tel" id="emergency_contact_phone" name="emergency_contact_phone">
+                </div>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Start Intake</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

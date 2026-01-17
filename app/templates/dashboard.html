@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Patient Intake System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1>Intake Dashboard</h1>
+        <a href="{{ url_for('main.seed_demo_data') }}" class="btn btn-secondary">Load Demo Data</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.total }}</div>
+            <div class="stat-label">Total Intakes</div>
+        </div>
+        <div class="stat-card stat-pending">
+            <div class="stat-number">{{ stats.pending }}</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card stat-progress">
+            <div class="stat-number">{{ stats.in_progress }}</div>
+            <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card stat-complete">
+            <div class="stat-number">{{ stats.complete }}</div>
+            <div class="stat-label">Complete</div>
+        </div>
+        <div class="stat-card stat-flagged">
+            <div class="stat-number">{{ stats.flagged }}</div>
+            <div class="stat-label">Flagged</div>
+        </div>
+    </div>
+
+    {% if flagged %}
+    <section class="dashboard-section">
+        <h2>Flagged - Needs Attention</h2>
+        <div class="intake-list">
+            {% for intake in flagged %}
+            <div class="intake-card flagged">
+                <div class="intake-info">
+                    <strong>{{ intake.patient.full_name }}</strong>
+                    <span class="badge badge-flagged">Flagged</span>
+                </div>
+                <div class="intake-reason">{{ intake.flagged_reason }}</div>
+                <a href="{{ url_for('main.patient_detail', patient_id=intake.patient_id) }}" class="btn btn-small">Review</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="dashboard-section">
+        <h2>Recent Activity</h2>
+        {% if recent_intakes %}
+        <div class="intake-list">
+            {% for intake in recent_intakes %}
+            <div class="intake-card">
+                <div class="intake-info">
+                    <strong>{{ intake.patient.full_name }}</strong>
+                    <span class="badge badge-{{ intake.status }}">{{ intake.status | replace('_', ' ') | title }}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ intake.completion_percentage }}%"></div>
+                </div>
+                <div class="intake-meta">
+                    <span>{{ intake.completion_percentage }}% complete</span>
+                    <a href="{{ url_for('main.patient_detail', patient_id=intake.patient_id) }}">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">No intakes yet. <a href="{{ url_for('main.new_intake') }}">Start a new intake</a> or <a href="{{ url_for('main.seed_demo_data') }}">load demo data</a>.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

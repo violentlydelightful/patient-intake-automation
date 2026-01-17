@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}{{ patient.full_name }} - Patient Intake{% endblock %}
+
+{% block content %}
+<div class="patient-detail">
+    <div class="patient-header">
+        <div>
+            <h1>{{ patient.full_name }}</h1>
+            <p class="patient-meta">DOB: {{ patient.date_of_birth.strftime('%B %d, %Y') }} | Phone: {{ patient.phone or 'N/A' }}</p>
+        </div>
+        <span class="badge badge-{{ patient.intake.status }} badge-large">{{ patient.intake.status | replace('_', ' ') | title }}</span>
+    </div>
+
+    <div class="progress-section">
+        <div class="progress-header">
+            <span>Intake Progress</span>
+            <span>{{ patient.intake.completion_percentage }}%</span>
+        </div>
+        <div class="progress-bar large">
+            <div class="progress-fill" style="width: {{ patient.intake.completion_percentage }}%"></div>
+        </div>
+    </div>
+
+    {% if patient.intake.status == 'flagged' %}
+    <div class="alert alert-warning">
+        <strong>Flagged:</strong> {{ patient.intake.flagged_reason }}
+    </div>
+    {% endif %}
+
+    <div class="workflow-steps">
+        <!-- Step 1: Personal Info -->
+        <div class="step {% if patient.intake.personal_info_complete %}complete{% endif %}">
+            <div class="step-header">
+                <span class="step-icon">{% if patient.intake.personal_info_complete %}&#10003;{% else %}1{% endif %}</span>
+                <span class="step-title">Personal Information</span>
+            </div>
+            <div class="step-content">
+                {% if patient.intake.personal_info_complete %}
+                <p class="step-status">Completed</p>
+                {% else %}
+                <form method="POST" action="{{ url_for('main.update_patient_intake', patient_id=patient.id) }}">
+                    <input type="hidden" name="step" value="personal_info_complete">
+                    <input type="hidden" name="action" value="complete">
+                    <button type="submit" class="btn btn-small btn-primary">Mark Complete</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Step 2: Insurance Verification -->
+        <div class="step {% if patient.intake.insurance_verified %}complete{% endif %}">
+            <div class="step-header">
+                <span class="step-icon">{% if patient.intake.insurance_verified %}&#10003;{% else %}2{% endif %}</span>
+                <span class="step-title">Insurance Verification</span>
+            </div>
+            <div class="step-content">
+                {% if patient.intake.insurance_verified %}
+                <div class="step-data">
+                    <p><strong>Provider:</strong> {{ patient.intake.insurance_provider or 'N/A' }}</p>
+                    <p><strong>Policy #:</strong> {{ patient.intake.insurance_policy_number or 'N/A' }}</p>
+                </div>
+                {% else %}
+                <form method="POST" action="{{ url_for('main.update_patient_intake', patient_id=patient.id) }}" class="step-form">
+                    <input type="hidden" name="step" value="insurance_verified">
+                    <div class="form-group">
+                        <label>Insurance Provider</label>
+                        <input type="text" name="insurance_provider" placeholder="e.g., Blue Cross">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Policy Number</label>
+                            <input type="text" name="insurance_policy_number">
+                        </div>
+                        <div class="form-group">
+                            <label>Group Number</label>
+                            <input type="text" name="insurance_group_number">
+                        </div>
+                    </div>
+                    <div class="step-actions">
+                        <button type="submit" name="action" value="complete" class="btn btn-small btn-primary">Verify & Complete</button>
+                        <button type="submit" name="action" value="flag" class="btn btn-small btn-warning">Flag Issue</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Step 3: Medical History -->
+        <div class="step {% if patient.intake.medical_history_complete %}complete{% endif %}">
+            <div class="step-header">
+                <span class="step-icon">{% if patient.intake.medical_history_complete %}&#10003;{% else %}3{% endif %}</span>
+                <span class="step-title">Medical History</span>
+            </div>
+            <div class="step-content">
+                {% if patient.intake.medical_history_complete %}
+                <div class="step-data">
+                    <p><strong>Allergies:</strong> {{ patient.intake.allergies or 'None reported' }}</p>
+                    <p><strong>Medications:</strong> {{ patient.intake.current_medications or 'None reported' }}</p>
+                    <p><strong>Conditions:</strong> {{ patient.intake.medical_conditions or 'None reported' }}</p>
+                </div>
+                {% else %}
+                <form method="POST" action="{{ url_for('main.update_patient_intake', patient_id=patient.id) }}" class="step-form">
+                    <input type="hidden" name="step" value="medical_history_complete">
+                    <div class="form-group">
+                        <label>Known Allergies</label>
+                        <textarea name="allergies" rows="2" placeholder="List any allergies..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Medications</label>
+                        <textarea name="current_medications" rows="2" placeholder="List current medications..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Medical Conditions</label>
+                        <textarea name="medical_conditions" rows="2" placeholder="List any medical conditions..."></textarea>
+                    </div>
+                    <button type="submit" name="action" value="complete" class="btn btn-small btn-primary">Save & Complete</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Step 4: Consent Forms -->
+        <div class="step {% if patient.intake.consent_forms_signed %}complete{% endif %}">
+            <div class="step-header">
+                <span class="step-icon">{% if patient.intake.consent_forms_signed %}&#10003;{% else %}4{% endif %}</span>
+                <span class="step-title">Consent Forms</span>
+            </div>
+            <div class="step-content">
+                {% if patient.intake.consent_forms_signed %}
+                <p class="step-status">All forms signed</p>
+                {% else %}
+                <form method="POST" action="{{ url_for('main.update_patient_intake', patient_id=patient.id) }}">
+                    <input type="hidden" name="step" value="consent_forms_signed">
+                    <input type="hidden" name="action" value="complete">
+                    <p class="step-instructions">Confirm patient has signed all required consent forms.</p>
+                    <button type="submit" class="btn btn-small btn-primary">Confirm Signed</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Step 5: ID Verification -->
+        <div class="step {% if patient.intake.id_verified %}complete{% endif %}">
+            <div class="step-header">
+                <span class="step-icon">{% if patient.intake.id_verified %}&#10003;{% else %}5{% endif %}</span>
+                <span class="step-title">ID Verification</span>
+            </div>
+            <div class="step-content">
+                {% if patient.intake.id_verified %}
+                <p class="step-status">Identity verified</p>
+                {% else %}
+                <form method="POST" action="{{ url_for('main.update_patient_intake', patient_id=patient.id) }}">
+                    <input type="hidden" name="step" value="id_verified">
+                    <input type="hidden" name="action" value="complete">
+                    <p class="step-instructions">Verify patient identity with government-issued ID.</p>
+                    <button type="submit" class="btn btn-small btn-primary">Confirm Verified</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if patient.intake.status == 'complete' %}
+    <div class="completion-banner">
+        <h2>Intake Complete</h2>
+        <p>All steps have been completed. Patient is ready for their appointment.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
