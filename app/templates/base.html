@@ -7,14 +7,42 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <!-- Animated background elements -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('main.dashboard') }}">Patient Intake System</a>
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            <a href="{{ url_for('main.dashboard') }}">PatientFlow</a>
         </div>
         <div class="nav-links">
-            <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('main.patient_list') }}">All Patients</a>
-            <a href="{{ url_for('main.new_intake') }}" class="btn btn-primary">New Intake</a>
+            <a href="{{ url_for('main.dashboard') }}" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Dashboard
+            </a>
+            <a href="{{ url_for('main.patient_list') }}" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Patients
+            </a>
+            <a href="{{ url_for('main.new_intake') }}" class="btn btn-primary nav-cta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                New Intake
+            </a>
         </div>
     </nav>
 
@@ -22,7 +50,20 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    <div class="alert alert-{{ category }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            {% if category == 'success' %}
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                            {% elif category == 'warning' %}
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                            {% else %}
+                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            {% endif %}
+                        </svg>
+                        {{ message }}
+                    </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
@@ -31,7 +72,22 @@
     </main>
 
     <footer class="footer">
-        <p>Healthcare Patient Intake Automation - Demo Project</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                PatientFlow
+            </div>
+            <p>Healthcare Workflow Automation</p>
+            <div class="footer-links">
+                <span class="footer-stat">Real-time Tracking</span>
+                <span class="footer-divider">|</span>
+                <span class="footer-stat">Secure & HIPAA-Ready</span>
+                <span class="footer-divider">|</span>
+                <span class="footer-stat">Demo Project</span>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
