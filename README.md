@@ -1,5 +1,7 @@
 # PatientFlow: Healthcare Intake Automation
 
+![Dashboard Screenshot](screenshots/dashboard.png)
+
 ## The Problem
 
 I spent time observing healthcare operations, and patient intake is consistently painful:
